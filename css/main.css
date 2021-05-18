@@ -1,0 +1,107 @@
+html {
+  background: url("../img/screen.jpg");
+}
+html.dropping {
+  background: red;
+}
+body {
+  margin: 0px;
+  padding: 0px;
+}
+#teletextbutton {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+}
+#teletext {
+  position: absolute;
+  left: 20px;
+  top: 84px;
+  background: rgba(0,0,0,0.8);
+  font-family: "European Teletext";
+  font-size: 22px;
+  margin: auto;
+  text-align: center;
+
+  padding: 20px;
+}
+#teletext span {
+  display: inline-block;
+}
+#teletext #headline {
+  white-space: pre;
+  color: white;
+}
+#teletext #content {
+  white-space: pre;
+}
+@font-face {
+  font-family: "European Teletext";
+  src: url("../fonts/EuropeanTeletext.woff");
+}
+
+#teletext .f0 {
+  color: transparent;
+}
+#teletext .f1 {
+  color: #FF0000;
+}
+#teletext .f2 {
+  color: #00FF00;
+}
+#teletext .f3 {
+  color: #FFFF00;
+}
+#teletext .f4 {
+  color: #0000FF;
+}
+#teletext .f5 {
+  color: #FF00FF;
+}
+#teletext .f6 {
+  color: #00FFFF;
+}
+#teletext .f7 {
+  color: #FFFFFF;
+}
+#teletext .f8 {
+  color: #000000;
+}
+#teletext .f9 {
+  color: #FF9900;
+}
+
+
+#teletext .b0 {
+  background-color: transparent;
+}
+#teletext .b1 {
+  background-color: #FF0000;
+}
+#teletext .b2 {
+  background-color: #00FF00;
+}
+#teletext .b3 {
+  background-color: #FFFF00;
+}
+#teletext .b4 {
+  background-color: #0000FF;
+}
+#teletext .b5 {
+  background-color: #FF00FF;
+}
+#teletext .b6 {
+  background-color: #00FFFF;
+}
+#teletext .b7 {
+  background-color: #FFFFFF;
+}
+#teletext .b8 {
+  background-color: #000000;
+}
+#teletext .b9 {
+  background-color: #FF9900;
+}
+#teletext.invisible {
+  display: none;
+}

@@ -1,0 +1,205 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <meta charset="utf-8"/>
+    <title>Teletext</title>
+    <link rel="stylesheet" href="css/main.css" >
+  </head>
+  <body onload="startUp();">
+    <div id="teletext">
+      <div id="headline">   loading</div>
+      <div id="content"></div>
+
+    </div>
+    <div id="teletextbutton"><img onclick="toggleTeletext();" src="img/logo.png" /></div>
+    <script src="https://extension-files.twitch.tv/helper/v1/twitch-ext.min.js"></script>
+    <script type="text/javascript">
+    window.requestFileSystem = window.requestFileSystem || window.webkitRequestFileSystem;
+
+    var dnd = new DnDFileController('html', function(files) {
+      var f = files[0];
+
+      if (!f.type.match('application/json')) {
+        alert('Not a JSON file!');
+      }
+
+      var reader = new FileReader();
+        reader.onloadend = function(e) {
+        var result = JSON.parse(this.result);
+        renderPage(result);
+      };
+      reader.readAsText(f);
+    });
+    function DnDFileController(selector, onDropCallback) {
+      var el_ = document.querySelector(selector);
+      this.dragenter = function(e) {
+        e.stopPropagation();
+        e.preventDefault();
+        el_.classList.add('dropping');
+      };
+      this.dragover = function(e) {
+        e.stopPropagation();
+        e.preventDefault();
+      };
+      this.dragover = function(e) {
+        e.stopPropagation();
+        e.preventDefault();
+        el_.classList.add('dropping');
+      };
+      this.drop = function(e) {
+        e.stopPropagation();
+        e.preventDefault();
+        el_.classList.remove('dropping');
+        onDropCallback(e.dataTransfer.files);
+      };
+      el_.addEventListener('dragenter', this.dragenter, false);
+      el_.addEventListener('dragover', this.dragover, false);
+      el_.addEventListener('dragleave', this.dragleave, false);
+      el_.addEventListener('drop', this.drop, false);
+
+
+    }
+    var nextPage;
+    var currentPage = 100;
+    function toggleTeletext() {
+      document.getElementById("teletext").classList.toggle("invisible");
+      getPage(100);
+
+    }
+    function pageIsValid(page) {
+      return (page > 99 && page < 900);
+    }
+    function pageAddNumber(num) {
+      const parsedNum = parseInt(num, 10);
+      if (isNaN(parsedNum)) { return false; }
+
+      if (nextPage == undefined) {
+        if (parsedNum != 0 && parsedNum != 9 ) {
+          nextPage = String(parsedNum);
+        }
+
+      } else {
+        nextPage += String(parsedNum);
+      }
+      if (pageIsValid(nextPage)) {
+        setPage(nextPage);
+      }
+      generateHeadline();
+    }
+
+
+    function setPage(page) {
+      currentPage = page;
+      nextPage = undefined;
+      generateHeadline();
+      getPage(page);
+
+    }
+    function getPage(page) {
+      getPageContent(page);
+    }
+    function startUp() {
+      generateHeadline();
+      window.setInterval(generateHeadline,1000);
+      getPage(100);
+    }
+
+    function getPageContent(page) {
+      let returnObj = {};
+      const requestURL = "content/jvpeek/" + page + ".json";
+      returnObj.line = [];
+
+      fetch(requestURL)
+      .then(res => res.json())
+      .then((out) => {
+        renderPage(out);
+      })
+      .catch(err => { throw err });
+
+      for (let i=0;i<24;i++) {
+        //returnObj.line[i] = "                        a" + page + "            ";
+
+      }
+    }
+    function renderPage(pageContent) {
+
+      for (let i=0;i<24;i++) {
+        let fontColor = 7;
+        let fontBackground = 8;
+        let lineChanged=false;
+
+        for (let j=0;j<pageContent.line[i].length;j++) {
+          let changed = false;
+
+          if (pageContent.line[i].charAt(j) == "²") {
+            changed=true;
+            lineChanged=true;
+
+            fontColor = pageContent.line[i].charAt(j+1);
+            pageContent.line[i] = pageContent.line[i].substr(0,j) + pageContent.line[i].substr(j+2);
+          }
+          if (pageContent.line[i].charAt(j) == "³") {
+            changed=true;
+            lineChanged=true;
+            fontBackground = pageContent.line[i].charAt(j+1);
+            pageContent.line[i] = pageContent.line[i].substr(0,j) + pageContent.line[i].substr(j+2);
+          }
+          if (changed==true) {
+            let fontString = "";
+            if (lineChanged) {
+              fontString += "</span>"
+            }
+            fontString += "<span class=\"f" + fontColor + " b" + fontBackground + "\">";
+            pageContent.line[i] = pageContent.line[i].substr(0,j) + fontString + pageContent.line[i].substr(j);
+
+          }
+        }
+        if (lineChanged) {
+          pageContent.line[i] += "</span>";
+        }
+        //pageContent.line[i] = "12345<span class=\"f" + (Math.floor(Math.random() * 8) + 1) + " b"+(Math.floor(Math.random() * 8) + 1)+"\">" + page + "</span>90123456789012345678901234567890";
+
+      }
+      let output = pageContent.line.join("<br />");
+
+      document.getElementById("content").innerHTML = output;
+    }
+
+    function generateHeadline() {
+      let output = " ";
+      if (nextPage == undefined)  {
+        output += currentPage + " ";
+      } else {
+        output += nextPage + " ";
+      }
+
+      for (let i = output.length-2; i<3;i++) {
+        output += " ";
+      }
+      output += currentPage + "   ";
+      output += "JvPeek TV";
+      let time = new Date;
+      let timeString = time.toLocaleDateString('de-DE', { year: '2-digit', month: '2-digit', day: '2-digit' })
+      timeString += " " + time.toLocaleTimeString('de-DE', {hours: '2-digit', minutes: '2-digit', seconds: '2-digit'})
+
+      let spaces = "";
+      for (let i = 0; i<(40-timeString.length-output.length);i++) {
+        spaces += " ";
+      }
+      output += spaces + timeString;
+      document.getElementById("headline").innerHTML = output;
+    }
+    document.addEventListener('keypress', (event) => {
+      if (event.key == "+") {
+        setPage(currentPage+1);
+      }
+      if (event.key == "-") {
+        setPage(currentPage-1);
+      }
+
+      pageAddNumber(event.key);
+
+    }, false);
+    </script>
+  </body>
+</html>
