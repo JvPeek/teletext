@@ -17,7 +17,7 @@ body {
   position: absolute;
   left: 20px;
   top: 84px;
-  background: rgba(0,0,0,0.8);
+  background: rgba(0,0,0,0.7);
   font-family: "European Teletext";
   font-size: 22px;
   margin: auto;
@@ -38,7 +38,7 @@ body {
 }
 @font-face {
   font-family: "European Teletext";
-  src: url("../fonts/EuropeanTeletext.woff");
+  src: url("../fonts/EuropeanTeletextExt.woff");
 }
 
 #teletext .f0 {
@@ -70,6 +70,9 @@ body {
 }
 #teletext .f9 {
   color: #FF9900;
+}
+#teletext .fa {
+  color: #9147FF;
 }
 
 

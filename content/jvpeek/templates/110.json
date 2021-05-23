@@ -28,11 +28,18 @@
   "title": "Crownwars Leaderboard",
   "replacements": [
     {
-      "name": "1",
+      "name": "1st",
       "line": 13,
       "char": 8,
       "mode": "replace",
       "orientation": "left"
+    },
+    {
+      "name": "1stscore",
+      "line": 13,
+      "char": 43,
+      "mode": "replace",
+      "orientation": "right"
     }
   ]
 }

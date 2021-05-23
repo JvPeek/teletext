@@ -106,7 +106,8 @@
 
     function getPageContent(page) {
       let returnObj = {};
-      const requestURL = "content/jvpeek/" + page + ".json";
+      let random = Math.floor(Math.random()*50000)
+      const requestURL = "content/jvpeek/" + page + ".json?" + random;
       returnObj.line = [];
 
       fetch(requestURL)
@@ -127,10 +128,12 @@
         let fontColor = 7;
         let fontBackground = 8;
         let lineChanged=false;
-
+        const fgcount = (pageContent.line[i].split("²").length -1) * 2;
+        const bgcount = (pageContent.line[i].split("³").length -1) * 2;
+        const charcount = pageContent.line[i].length - fgcount - bgcount;
+        console.log(charcount);
         for (let j=0;j<pageContent.line[i].length;j++) {
           let changed = false;
-
           if (pageContent.line[i].charAt(j) == "²") {
             changed=true;
             lineChanged=true;
