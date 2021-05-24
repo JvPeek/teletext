@@ -1,5 +1,6 @@
 html {
   /* background: url("../img/screen.jpg"); */
+  background: #222222;
 }
 html.dropping {
   background: red;
