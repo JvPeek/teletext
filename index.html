@@ -108,7 +108,7 @@
     function getPageContent(page) {
       let returnObj = {};
       let random = Math.floor(Math.random()*50000)
-      const requestURL = "content/jvpeek/" + page + ".json?" + random;
+      const requestURL = "content/jvpeek/" + page + ".json?r=" + random;
       returnObj.line = [];
 
       fetch(requestURL)
@@ -127,6 +127,7 @@
       while (pageContent.line.length > 24) {
         pageContent.line.pop();
         console.log("too many lines");
+
       }
       while (pageContent.line.length < 24) {
         pageContent.line.push("²1³8");
