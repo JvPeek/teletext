@@ -123,7 +123,12 @@
       }
     }
     function renderPage(pageContent) {
-
+      while (pageContent.line.length > 24) {
+        pageContent.line.pop();
+      }
+      while (pageContent.line.length < 24) {
+        pageContent.line.push("²1³8");
+      }
       for (let i=0;i<24;i++) {
         let fontColor = 7;
         let fontBackground = 8;
