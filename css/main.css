@@ -107,6 +107,9 @@ body {
 #teletext .b9 {
   background-color: #FF9900;
 }
+#teletext .ba {
+  background-color: #9147FF;
+}
 #teletext.invisible {
   display: none;
 }
