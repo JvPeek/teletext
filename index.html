@@ -131,7 +131,16 @@
         const fgcount = (pageContent.line[i].split("²").length -1) * 2;
         const bgcount = (pageContent.line[i].split("³").length -1) * 2;
         const charcount = pageContent.line[i].length - fgcount - bgcount;
-        console.log(charcount);
+        //console.log(charcount);
+        if (charcount > 40) {
+
+          pageContent.line[i] = pageContent.line[i].substr(0,pageContent.line[i].length - (charcount - 40));
+        }
+        if (charcount < 40) {
+          for (let j=charcount;j<40;j++) {
+            pageContent.line[i] += " ";
+          }
+        }
         for (let j=0;j<pageContent.line[i].length;j++) {
           let changed = false;
           if (pageContent.line[i].charAt(j) == "²") {
