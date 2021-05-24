@@ -1,5 +1,5 @@
 html {
-  background: url("../img/screen.jpg");
+  /* background: url("../img/screen.jpg"); */
 }
 html.dropping {
   background: red;
