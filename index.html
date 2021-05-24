@@ -6,6 +6,7 @@
     <link rel="stylesheet" href="css/main.css" >
   </head>
   <body onload="startUp();">
+    <div id="debug"></div>
     <div id="teletext">
       <div id="headline">   loading</div>
       <div id="content"></div>
@@ -125,9 +126,11 @@
     function renderPage(pageContent) {
       while (pageContent.line.length > 24) {
         pageContent.line.pop();
+        console.log("too many lines");
       }
       while (pageContent.line.length < 24) {
         pageContent.line.push("²1³8");
+        console.log("needs more lines");
       }
       for (let i=0;i<24;i++) {
         let fontColor = 7;
@@ -138,10 +141,11 @@
         const charcount = pageContent.line[i].length - fgcount - bgcount;
         //console.log(charcount);
         if (charcount > 40) {
-
+          console.log("line",i,"too long");
           pageContent.line[i] = pageContent.line[i].substr(0,pageContent.line[i].length - (charcount - 40));
         }
         if (charcount < 40) {
+          console.log("line",i,"too short");
           for (let j=charcount;j<40;j++) {
             pageContent.line[i] += " ";
           }
