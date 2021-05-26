@@ -51,6 +51,9 @@ body {
 
   padding: 0px 20px;
 }
+#teletext .link {
+  cursor: pointer;
+}
 #teletext span {
   display: inline-block;
 }

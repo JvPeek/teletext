@@ -192,6 +192,14 @@
         if (lineChanged) {
           pageContent.line[i] += "</span>";
         }
+        //const regex = '\\d{3}';
+        const regex = '[1-8][0-9][0-9]';
+        const result = pageContent.line[i].match(regex);
+        if (result != null) {
+          pageContent.line[i] = pageContent.line[i].substr(0,result.index) + "<span class=\"link\" onclick=\"setPage(" + pageContent.line[i].substr(result.index,3) + ");\">" + pageContent.line[i].substr(result.index,3) + "</span>" + pageContent.line[i].substr(result.index+3);
+          console.log(i,pageContent.line[i]);
+        }
+
         //pageContent.line[i] = "12345<span class=\"f" + (Math.floor(Math.random() * 8) + 1) + " b"+(Math.floor(Math.random() * 8) + 1)+"\">" + page + "</span>90123456789012345678901234567890";
 
       }
