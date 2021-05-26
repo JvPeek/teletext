@@ -12,6 +12,20 @@
       <div id="content"></div>
 
     </div>
+    <div id="teletextkeypad">
+      <input class="button" type="button" value="1" onclick="keyPress('1');" />
+      <input class="button" type="button" value="2" onclick="keyPress('2');" />
+      <input class="button" type="button" value="3" onclick="keyPress('3');" />
+      <input class="button" type="button" value="4" onclick="keyPress('4');" />
+      <input class="button" type="button" value="5" onclick="keyPress('5');" />
+      <input class="button" type="button" value="6" onclick="keyPress('6');" />
+      <input class="button" type="button" value="7" onclick="keyPress('7');" />
+      <input class="button" type="button" value="8" onclick="keyPress('8');" />
+      <input class="button" type="button" value="9" onclick="keyPress('9');" />
+      <input class="button" type="button" value="-" onclick="keyPress('-');" />
+      <input class="button" type="button" value="0" onclick="keyPress('0');" />
+      <input class="button" type="button" value="+" onclick="keyPress('+');" />
+    </div>
     <div id="teletextbutton"><img onclick="toggleTeletext();" src="img/logo.png" /></div>
     <script src="https://extension-files.twitch.tv/helper/v1/twitch-ext.min.js"></script>
     <script type="text/javascript">
@@ -173,7 +187,6 @@
             }
             fontString += "<span class=\"f" + fontColor + " b" + fontBackground + "\">";
             pageContent.line[i] = pageContent.line[i].substr(0,j) + fontString + pageContent.line[i].substr(j);
-
           }
         }
         if (lineChanged) {
@@ -211,16 +224,30 @@
       output += spaces + timeString;
       document.getElementById("headline").innerHTML = output;
     }
+    function keyPress(key) {
+      console.log('got key event',key);
+      if (key == "+") {
+        let tempPage = parseInt(currentPage,10)+1;
+        if (tempPage >= 900) {
+          tempPage = 100;
+        }
+        setPage(tempPage);
+        return;
+      }
+      if (key == "-") {
+        let tempPage = parseInt(currentPage,10)-1;
+        if (tempPage <= 99) {
+          tempPage = 899;
+        }
+        setPage(tempPage);
+        return;
+      }
+
+      pageAddNumber(key);
+
+    }
     document.addEventListener('keypress', (event) => {
-      if (event.key == "+") {
-        setPage(currentPage+1);
-      }
-      if (event.key == "-") {
-        setPage(currentPage-1);
-      }
-
-      pageAddNumber(event.key);
-
+      keyPress(event.key);
     }, false);
     </script>
   </body>

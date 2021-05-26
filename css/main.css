@@ -6,26 +6,50 @@ html.dropping {
   background: red;
 }
 body {
+  overflow: hidden;
   margin: 0px;
   padding: 0px;
+}
+#teletextkeypad {
+  position: absolute;
+  width: 100px;
+  height: 150px;
+  left: 0px;
+  top: 50%;
+  transform: translate(0,-50%);
+}
+#teletextkeypad .button {
+  width: 26px;
+  height: 27px;
+
 }
 #teletextbutton {
   position: absolute;
   bottom: 20px;
   left: 20px;
 }
+#teletextbutton img {
+
+  width: 10vw;
+}
 #teletext {
   position: absolute;
-  left: 20px;
-  top: 84px;
+  left:50%;
+  transform: translate(-50%,0);
+  top: 0px;
   background: rgba(0,0,0,0.7);
   font-family: "European Teletext";
   font-size: 22px;
+  letter-spacing: 0.1px;
+  height: 100%;
+  width: 100%;
+
+  font-size: 4.4vh;
+  line-height: 4vh;
   margin: auto;
-  line-height: 20px;
   text-align: center;
 
-  padding: 20px;
+  padding: 0px 20px;
 }
 #teletext span {
   display: inline-block;
