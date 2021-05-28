@@ -20,5 +20,5 @@ This application requires php to run (see `/content/jvpeek/store.php` for more d
 - send PR with modified page
 
 ## test pages easily
-- go to https://jvpeek.gitlab.io/teletext
+- go to https://jvpeek.github.io/teletext
 - drag&drop your JSON file (see above) to your browser window
