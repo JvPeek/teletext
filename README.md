@@ -16,3 +16,5 @@ This application requires php to run (see `/content/jvpeek/store.php` for more d
 # Add Pages
 - go to `/content/jvpeek/`
 - copy `template.json` to `<teletext-address>.json`
+- fill with content
+- send PR with modified page
