@@ -21,7 +21,6 @@ window.addEventListener('load', () => {
 })
 
 window.nextPage = null
-window.currentPage = 100
 window.requestFileSystem = window.requestFileSystem || window.webkitRequestFileSystem;
 window.PageManager = PageManager
 
