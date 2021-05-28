@@ -28,9 +28,9 @@ body {
   bottom: 20px;
   left: 20px;
 }
-#teletextbutton img {
-
+#teletextbutton>img {
   width: 10vw;
+  max-width: 100px;
 }
 #teletext {
   position: absolute;
