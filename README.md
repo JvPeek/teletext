@@ -18,3 +18,7 @@ This application requires php to run (see `/content/jvpeek/store.php` for more d
 - copy `template.json` to `<teletext-address>.json`
 - fill with content
 - send PR with modified page
+
+## test pages easily
+- go to https://jvpeek.gitlab.io/teletext
+- drag&drop your JSON file (see above) to your browser window
