@@ -1,0 +1,20 @@
+{
+  "name": "teletext",
+  "version": "1.0.0",
+  "description": "This application is going to add teletext-functionality to twitch streams via plugin.",
+  "main": "index.js",
+  "scripts": {
+    "start": "php -S localhost:8080",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JvPeek/teletext.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/JvPeek/teletext/issues"
+  },
+  "homepage": "https://github.com/JvPeek/teletext#readme"
+}

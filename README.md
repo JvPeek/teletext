@@ -6,7 +6,7 @@ This application requires php to run (see `/content/jvpeek/store.php` for more d
 ### dev
 - clone repository
 - cd into repository
-- `php -S localhost:8080` (port doesn't matter)
+- `npm start` or `php -S localhost:8080` (port doesn't matter)
 - browse `localhost:8080`
 
 ### prod
