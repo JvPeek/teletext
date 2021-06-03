@@ -1,3 +1,5 @@
+// TODO: Store in PageStore
+
 function DnDFileController(selector, onDropCallback) {
   var el_ = document.querySelector(selector);
   this.dragenter = function(e) {

@@ -1,3 +1,4 @@
+import PageStore from './pageStore.js'
 import renderPage from './pageOps/renderPage.js'
 import updateHeadline from './pageOps/updateHeadline.js'
 
@@ -5,21 +6,8 @@ const pageManager = {
   currentPage: 100,
   isValidPageNumber: page => (page > 99 && page < 900),
   updateHeadline: () => updateHeadline(),
+  fetch: pageNumber => PageStore.get(pageNumber),
   render: pageContent => renderPage(pageContent),
-  fetch: (pageNumber) => {
-    let returnObj = {};
-    let random = Math.floor(Math.random()*50000)
-    const requestURL = "content/jvpeek/" + pageNumber + ".json?r=" + random;
-    returnObj.line = [];
-
-    return fetch(requestURL)
-      .then(res => res.json())
-      .catch(err => { throw err })
-
-    for (let i=0;i<24;i++) {
-      //returnObj.line[i] = "                        a" + page + "            ";
-    }
-  },
   pageUp() {
     this.page = this.currentPage + 1
   },
