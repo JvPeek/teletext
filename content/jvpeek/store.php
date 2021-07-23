@@ -6,7 +6,7 @@ $pageContent = readJSON($page);
 $pageContent = checkForFields($pageContent);
 $pageContent = setContents($pageContent);
 $pageContent = stripForTemplate($pageContent);
-echo (json_encode($pageContent));
+//echo (json_encode($pageContent));
 writeJSON($page,json_encode($pageContent,JSON_PRETTY_PRINT|JSON_UNESCAPED_UNICODE));
 
 
@@ -50,9 +50,16 @@ function stripForTemplate($pageContent) {
   //echo(json_encode($pageContent));
   return $pageContent;
 }
-function setContent($pageContent, $line ,$pos, $string, $orientation) {
+function setContent($pageContent, $line ,$from, $to, $string, $orientation) {
   $thisLine = $pageContent->lines[$line];
-  $pageContent->lines[$line] = substr($thisLine,0,$pos) . $string . substr($thisLine,$pos + strlen($string));
+  if ($orientation == "left") {
+    $pageContent->lines[$line] = substr($thisLine,0,$from) . $string . substr($thisLine,$from + strlen($string));
+  }
+  if ($orientation == "right") {
+    $fillSpace = $to - $from - strlen($string);
+    echo $fillSpace;
+    $pageContent->lines[$line] = substr($thisLine,0,$from+$fillSpace) . $string . substr($thisLine,$from + strlen($string)+$fillSpace);
+  }
   return $pageContent;
 }
 function setContents($pageContent) {
@@ -61,7 +68,7 @@ function setContents($pageContent) {
   foreach($pageContent->dynamicSections as $key => $value) {
     if (isset($_GET[$value->id])) {
       //var_dump($value);
-      $pageContent = setContent($pageContent, $value->row , $value->from, $_GET[$value->id],  $value->align);
+      $pageContent = setContent($pageContent, $value->row , $value->from, $value->to, $_GET[$value->id],  $value->align);
 
     }
 
