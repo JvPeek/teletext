@@ -1,16 +1,21 @@
 <?php
 header('Content-Type: application/json');
-$page = getPageNum();
 
-$pageContent = readJSON($page);
-$pageContent = checkForFields($pageContent);
-$pageContent = setContents($pageContent);
-$pageContent = stripForTemplate($pageContent);
-//echo (json_encode($pageContent));
-writeJSON($page,json_encode($pageContent,JSON_PRETTY_PRINT|JSON_UNESCAPED_UNICODE));
+// POST https://jvpeek.de/content/jvpeek/store.php?format=json data
+if ($_SERVER["QUERY_STRING"] === "format=json" && $_SERVER["REQUEST_METHOD"] === "POST") {
+  $data = json_decode(file_get_contents('php://input'), true);
 
-
-
+  writeJSON("102", json_encode($data, JSON_PRETTY_PRINT|JSON_UNESCAPED_UNICODE));
+} else {
+  
+  $page = getPageNum();
+  $pageContent = readJSON($page);
+  $pageContent = checkForFields($pageContent);
+  $pageContent = setContents($pageContent);
+  $pageContent = stripForTemplate($pageContent);
+  //echo (json_encode($pageContent));
+  writeJSON($page,json_encode($pageContent,JSON_PRETTY_PRINT|JSON_UNESCAPED_UNICODE));
+}
 
 
 function readJSON($page) {
@@ -24,11 +29,15 @@ function readJSON($page) {
 
   return json_decode($file);
 }
+
+
 function checkForFields($pageContent) {
   //iterates over the requested changes and applies them.
 
   return $pageContent;
 }
+
+
 function writeJSON($page, $json) {
 
   // writes the new JSON file to disk
@@ -45,11 +54,15 @@ function pageIsValid($page) {
   };
   return false;
 }
+
+
 function stripForTemplate($pageContent) {
   unset($pageContent->dynamicSections);
   //echo(json_encode($pageContent));
   return $pageContent;
 }
+
+
 function setContent($pageContent, $line ,$from, $to, $string, $orientation) {
   $thisLine = $pageContent->lines[$line];
   if ($orientation == "left") {
@@ -62,6 +75,8 @@ function setContent($pageContent, $line ,$from, $to, $string, $orientation) {
   }
   return $pageContent;
 }
+
+
 function setContents($pageContent) {
   //var_dump($pageContent->dynamicSections);
 
@@ -75,6 +90,8 @@ function setContents($pageContent) {
   }
   return $pageContent;
 }
+
+
 function getPageNum() {
 
   if (!isset($_GET["page"])) {
