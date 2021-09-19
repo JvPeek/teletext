@@ -93,16 +93,8 @@ const PageStore = {
     const requestURL = "content/jvpeek/" + pageNumber + ".json?r=" + random
     returnObj.lines = []
 
-
-    let json = fetch(requestURL)
-      .then(res => {
-        if (res.ok) {
-          return res.json()
-        } else {
-          return fetch('content/jvpeek/404.json?r=' + random).then(res => res.json())
-        }
-      }).catch(e => console.log(e.message))
-    return json
+    return fetch(requestURL)
+      .then(res => res.json())
   }
 }
 
