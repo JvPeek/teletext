@@ -6,7 +6,9 @@ html.dropping {
   background: red;
 }
 body {
-  overflow: hidden;
+  overflow: scroll;
+  min-width: 1400px;
+  width: auto;
   margin: 0px;
   padding: 0px;
 }
@@ -45,11 +47,11 @@ body {
   width: 100%;
 
   font-size: 4.4vh;
-  line-height: 4vh;
+  line-height: 3.92vh;
   margin: auto;
   text-align: center;
 
-  padding: 0px 20px;
+  padding: 0px;
 }
 #teletext .link {
   cursor: pointer;
