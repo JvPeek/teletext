@@ -16,7 +16,17 @@ window.addEventListener('load', () => {
   // Prepare and refresh headline
   PageManager.updateHeadline();
   window.setInterval(PageManager.updateHeadline,1000);
-  PageManager.page = 100
+
+  let initPage = 100
+  // Handle location.hash (#100-#899)
+  let startwithPage = /^#(\d{3})$/.exec(window.location.hash)
+  if(startwithPage.length > 0) {
+    initPage = parseInt(startwithPage[1])
+    if(initPage<100 || initPage>899) {
+      initPage = 100
+    }
+  }
+  PageManager.page = initPage
   // getPage(100);
 })
 
