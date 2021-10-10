@@ -19,8 +19,9 @@ window.addEventListener('load', () => {
 
   let initPage = 100
   // Handle location.hash (#100-#899)
+
   let startwithPage = /^#(\d{3})$/.exec(window.location.hash)
-  if(startwithPage.length > 0) {
+  if(startwithPage) {
     initPage = parseInt(startwithPage[1])
     if(initPage<100 || initPage>899) {
       initPage = 100
