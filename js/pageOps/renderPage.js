@@ -71,6 +71,8 @@ function renderPage(pageContent) {
   let output = pageContent.lines.join("<br />");
 
   document.getElementById("content").innerHTML = output;
+
+  window.location.hash = "#" + PageManager.page;
 }
 
 export default renderPage

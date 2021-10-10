@@ -24,7 +24,6 @@ const updateHeadline = () => {
   output += spaces + timeString;
   document.getElementById("headline").innerHTML = output;
   //history.pushState({}, null, "#" + PageManager.page);
-  window.location.hash = "#" + PageManager.page;
   //TODO: use this output to actually set the headline hidden functionality bad >:(
   return output
 }
