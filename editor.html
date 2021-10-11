@@ -4,47 +4,44 @@
     <meta charset="utf-8"/>
     <title>Teletext Charset</title>
     <style type="text/css">
-		@font-face {
-		  font-family: "European Teletext";
-		  src: url("fonts/EuropeanTeletextExt.woff");
-		}
-		#charlist span {
-			display: inline-block;
-			border: 1px solid black;
-			margin-top:4px;
-			font-family: "European Teletext";
-			font-size: 22px;
-      height: 22px;
-		}
-    #editor {
-      border: 2px solid black;
-      line-height: 20px;
-
+      @font-face {
+        font-family: "European Teletext";
+        src: url("fonts/EuropeanTeletextExt.woff");
+      }
+      #charlist span {
+        display: inline-block;
+        border: 1px solid black;
+        margin-top:4px;
+        font-family: "European Teletext";
+        font-size: 22px;
+        height: 22px;
+      }
+      #editor {
+        border: 2px solid black;
+        line-height: 20px;
+      }
+      input {
+        font-family: "European Teletext";
+        font-size: 22px;
+        line-height:20px;
+        padding: 0px;
+        margin: 0px;
+        outline: none;
+        border: none;
+      }
+    </style>
+    <script type="text/javascript">
+    function startUp() {
+      buildTextBox();
     }
-		input {
-			font-family: "European Teletext";
-			font-size: 22px;
-			line-height:20px;
-      padding: 0px;
-      margin: 0px;
-      outline: none;
-      border: none;
-		}
-	</style>
-  <script type="text/javascript">
-  function startUp() {
-    buildTextBox();
-  }
-  function buildTextBox() {
-    let editorContainer = document.getElementById("editor");
-    let html = "";
-    for (let i=0;i<24;i++) {
-      html += '<input type="text" class="row" name="row' + (i+1) + '" length="40" /><br />';
+    function buildTextBox() {
+      let editorContainer = document.getElementById("editor");
+      let html = "";
+      for (let i=0;i<24;i++) {
+        html += '<input type="text" class="row" name="row' + (i+1) + '" length="40" /><br />';
+      }
+      editorContainer.innerHTML = html;
     }
-    editorContainer.innerHTML = html;
-  }
-
-
   </script>
   </head>
   <body onload="startUp();">
@@ -703,9 +700,7 @@
     <span class="char_uniE37E">&#xe37e;</span>
     <span class="char_uniE37F">&#xe37f;</span>
   </div>
-<p>Editor:<br />
-  <div id="editor">
-  </div>
-
+  <p>Editor:<br />
+  <div id="editor"></div>
  </body>
 </html>

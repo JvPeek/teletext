@@ -7,10 +7,7 @@ $pageContent = checkForFields($pageContent);
 $pageContent = setContents($pageContent);
 $pageContent = stripForTemplate($pageContent);
 //echo (json_encode($pageContent));
-writeJSON($page,json_encode($pageContent,JSON_PRETTY_PRINT|JSON_UNESCAPED_UNICODE));
-
-
-
+writeJSON($page, json_encode($pageContent, JSON_PRETTY_PRINT|JSON_UNESCAPED_UNICODE));
 
 
 function readJSON($page) {
@@ -24,13 +21,14 @@ function readJSON($page) {
 
   return json_decode($file);
 }
+
 function checkForFields($pageContent) {
   //iterates over the requested changes and applies them.
 
   return $pageContent;
 }
-function writeJSON($page, $json) {
 
+function writeJSON($page, $json) {
   // writes the new JSON file to disk
   $fp = fopen($page . '.json', 'w');
   fwrite($fp, $json);
@@ -42,49 +40,54 @@ function writeJSON($page, $json) {
 function pageIsValid($page) {
   if ($page >= 100 && $page < 900) {
     return true;
-  };
+  }
+
   return false;
 }
+
 function stripForTemplate($pageContent) {
   unset($pageContent->dynamicSections);
   //echo(json_encode($pageContent));
   return $pageContent;
 }
-function setContent($pageContent, $line ,$from, $to, $string, $orientation) {
+
+function setContent($pageContent, $line, $from, $to, $string, $orientation) {
   $thisLine = $pageContent->lines[$line];
   if ($orientation == "left") {
-    $pageContent->lines[$line] = substr($thisLine,0,$from) . $string . substr($thisLine,$from + strlen($string));
+    $pageContent->lines[$line] = substr($thisLine, 0, $from) . $string . substr($thisLine, $from + strlen($string));
   }
+
   if ($orientation == "right") {
     $fillSpace = $to - $from - strlen($string);
     echo $fillSpace;
-    $pageContent->lines[$line] = substr($thisLine,0,$from+$fillSpace) . $string . substr($thisLine,$from + strlen($string)+$fillSpace);
+    $pageContent->lines[$line] = substr($thisLine, 0, $from + $fillSpace) . $string . substr($thisLine, $from + strlen($string) + $fillSpace);
   }
+
   return $pageContent;
 }
+
 function setContents($pageContent) {
   //var_dump($pageContent->dynamicSections);
 
   foreach($pageContent->dynamicSections as $key => $value) {
     if (isset($_GET[$value->id])) {
       //var_dump($value);
-      $pageContent = setContent($pageContent, $value->row , $value->from, $value->to, $_GET[$value->id],  $value->align);
-
+      $pageContent = setContent($pageContent, $value->row, $value->from, $value->to, $_GET[$value->id], $value->align);
     }
-
   }
+
   return $pageContent;
 }
-function getPageNum() {
 
+function getPageNum() {
   if (!isset($_GET["page"])) {
-    exit ("nope");
+    exit("nope");
   }
+
   $page = $_GET["page"];
-  if (pageIsValid($page) == false) {
-    exit ("ungültige Seitennummer");
+  if (pageIsValid($page) === false) {
+    exit("ungültige Seitennummer");
   }
+
   return $page;
 }
-
-?>
