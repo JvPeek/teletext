@@ -8,10 +8,6 @@
     "²7³8                                        ",
     "²7³8              Würfelzeiten              ",
     "²7³8                                        ",
-    "²7³8                                        ",
-    "²7³8                                        ",
-    "²7³8                                        ",
-    "²7³8                                        ",
     "²3³8  1 ................................. _ ",
     "²7³8                                        ",
     "²9³8  2 ................................. _ ",
@@ -23,149 +19,160 @@
     "²1³8  8 ................................. _ ",
     "²1³8  9 ................................. _ ",
     "²1³8 10 ................................. _ ",
-    "²7³8                                        "
+    "²7³8                                   ²4   ",
+    "²7³8  Noch ausstehende Würfel:         ²4 ",
+    "²7³8                                   ²4³1³3³8 ",
+    "²7³8                                   ²1³1²4³3 ³8 ",
+    "²7³8                                   ²1²3 "
   ],
   "title": "cubescore",
   "dynamicSections": [
     {
       "id": "name1",
-      "row": 12,
+      "row": 8,
       "from": 10,
       "to": 42,
       "align": "left"
     },
     {
       "id": "score1",
-      "row": 12,
+      "row": 8,
       "from": 39,
       "to": 45,
       "align": "right"
     },
     {
       "id": "name2",
-      "row": 14,
+      "row": 10,
       "from": 10,
       "to": 42,
       "align": "left"
     },
     {
       "id": "score2",
-      "row": 14,
+      "row": 10,
       "from": 39,
       "to": 45,
       "align": "right"
     },
     {
       "id": "name3",
-      "row": 15,
+      "row": 11,
       "from": 10,
       "to": 42,
       "align": "left"
     },
     {
       "id": "score3",
-      "row": 15,
+      "row": 11,
       "from": 39,
       "to": 45,
       "align": "right"
     },
     {
       "id": "name4",
-      "row": 16,
+      "row": 12,
       "from": 10,
       "to": 42,
       "align": "left"
     },
     {
       "id": "score4",
-      "row": 16,
+      "row": 12,
       "from": 39,
       "to": 45,
       "align": "right"
     },
     {
       "id": "name5",
-      "row": 17,
+      "row": 13,
       "from": 10,
       "to": 42,
       "align": "left"
     },
     {
       "id": "score5",
-      "row": 17,
+      "row": 13,
       "from": 39,
       "to": 45,
       "align": "right"
     },
     {
       "id": "name6",
-      "row": 18,
+      "row": 14,
       "from": 10,
       "to": 42,
       "align": "left"
     },
     {
       "id": "score6",
-      "row": 18,
+      "row": 14,
       "from": 39,
       "to": 45,
       "align": "right"
     },
     {
       "id": "name7",
-      "row": 19,
+      "row": 15,
       "from": 10,
       "to": 42,
       "align": "left"
     },
     {
       "id": "score7",
-      "row": 19,
+      "row": 15,
       "from": 39,
       "to": 45,
       "align": "right"
     },
     {
       "id": "name8",
-      "row": 20,
+      "row": 16,
       "from": 10,
       "to": 42,
       "align": "left"
     },
     {
       "id": "score8",
-      "row": 20,
+      "row": 16,
       "from": 39,
       "to": 45,
       "align": "right"
     },
     {
       "id": "name9",
-      "row": 21,
+      "row": 17,
       "from": 10,
       "to": 42,
       "align": "left"
     },
     {
       "id": "score9",
-      "row": 21,
+      "row": 17,
       "from": 39,
       "to": 45,
       "align": "right"
     },
     {
       "id": "name10",
-      "row": 22,
+      "row": 18,
       "from": 10,
       "to": 42,
       "align": "left"
     },
     {
       "id": "score10",
-      "row": 22,
+      "row": 18,
       "from": 39,
       "to": 45,
       "align": "right"
+    },
+    {
+      "id": "cubecount",
+      "row": 20,
+      "from": 34,
+      "to": 38,
+      "align": "left"
     }
 
 
