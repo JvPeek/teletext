@@ -28,7 +28,7 @@
   "title": "cubescore",
   "dynamicSections": [
     {
-      "id": "key1",
+      "id": "name1",
       "row": 12,
       "from": 10,
       "to": 42,
@@ -42,7 +42,7 @@
       "align": "right"
     },
     {
-      "id": "key2",
+      "id": "name2",
       "row": 14,
       "from": 10,
       "to": 42,
@@ -56,7 +56,7 @@
       "align": "right"
     },
     {
-      "id": "key3",
+      "id": "name3",
       "row": 15,
       "from": 10,
       "to": 42,
@@ -70,7 +70,7 @@
       "align": "right"
     },
     {
-      "id": "key4",
+      "id": "name4",
       "row": 16,
       "from": 10,
       "to": 42,
@@ -84,7 +84,7 @@
       "align": "right"
     },
     {
-      "id": "key5",
+      "id": "name5",
       "row": 17,
       "from": 10,
       "to": 42,
@@ -98,7 +98,7 @@
       "align": "right"
     },
     {
-      "id": "key6",
+      "id": "name6",
       "row": 18,
       "from": 10,
       "to": 42,
@@ -112,7 +112,7 @@
       "align": "right"
     },
     {
-      "id": "key7",
+      "id": "name7",
       "row": 19,
       "from": 10,
       "to": 42,
@@ -126,7 +126,7 @@
       "align": "right"
     },
     {
-      "id": "key8",
+      "id": "name8",
       "row": 20,
       "from": 10,
       "to": 42,
@@ -140,7 +140,7 @@
       "align": "right"
     },
     {
-      "id": "key9",
+      "id": "name9",
       "row": 21,
       "from": 10,
       "to": 42,
@@ -154,7 +154,7 @@
       "align": "right"
     },
     {
-      "id": "key10",
+      "id": "name10",
       "row": 22,
       "from": 10,
       "to": 42,
