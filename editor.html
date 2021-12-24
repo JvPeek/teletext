@@ -6,10 +6,7 @@
     <meta property="og:description" content="A Teletext for Twitch" />
     <meta property="og:locale" content="de_DE" />
     <meta property="og:url" content="https://teletext.jvpeek.de" />
-    <meta
-      property="og:image"
-      content="https://teletext.jvpeek.de/img/logo.png"
-    />
+    <meta property="og:image" content="https://teletext.jvpeek.de/img/logo.png" />
     <title>Teletext</title>
     <link rel="stylesheet" href="css/editor.css" />
     <script type="module" src="js/editor.js" charset="utf-8"></script>
@@ -17,8 +14,18 @@
   <body>
     <div id="debug"></div>
     <div id="charlist"></div>
-    <div id="fgColors"></div>
-    <div id="bgColors"></div>
+    <div id="ColorContainer">
+      Text Colors:
+      <div id="fgColors"></div>
+      Background Colors:
+      <div id="bgColors"></div>
+    </div>
+    <div>
+      <label for="titleInput">Title: </label><input id="titleInput" type="text" placeholder="CHANGE ME" />
+      <!--<input id="trueTele" type="checkbox" />TrueTeletext-->
+    </div>
+    <button class="button" style="background-color: RED; color: white">Reset</button>
+    <button id="exportButton" class="button" style="background-color: green; color: white">Export</button>
     <br />
     <div id="teletext">
       <div id="content"></div>

@@ -7,7 +7,15 @@
   font-family: "European Teletext";
   font-size: 22px;
   height: 22px;
-  color: #ffffff;
+
+}
+.button {
+  border: 2px solid black;
+  color: transparent;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
 }
 
 #editor {
@@ -26,5 +34,6 @@
 }
 
 html {
-  overflow: scroll;
+  overflow: auto;
+  color: #ffffff;
 }

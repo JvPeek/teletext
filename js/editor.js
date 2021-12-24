@@ -657,49 +657,27 @@ let chars = [
 
 //usable lines
 //line width: 40
-let json = {
-  lines: [
-    "²7³1               ³0 ²8³3                        ",
-    "²7³1   JvPeek TV   ³0 ²8³3 Mittwoch ... 20:00 CET ",
-    "²7³1  Twitch Text  ³0 ²8³3 Sonntag .... 11:00 CET ",
-    "²7³1               ³0 ²8³3                        ",
-    "²0³0                                        ",
-    "²7³8                                        ",
-    "²7³8                                        ",
-    "²7³8                                        ",
-    "²7³8                                        ",
-    "²7³8                                        ",
-    "²7³8                                        ",
-    "²7³8                                        ",
-    "²7³8                                        ",
-    "²7³8                                        ",
-    "²7³8                                        ",
-    "²7³8                                        ",
-    "²7³8                                        ",
-    "²7³8                                        ",
-    "²7³8                                        ",
-    "²7³8                                        ",
-    "²7³8                                        ",
-    "²7³8                                        ",
-    "²7³8                                        ",
-    "²7³8                                        ",
-  ],
-  title: "CHANGE ME",
-};
-
-let textColors = [];
-let backgroundColors = [];
-let lines = [];
 
 const rows = 20;
 const columns = 40;
+
+let fgColors = Array.from(Array(rows), () => new Array(columns));
+let bgColors = Array.from(Array(rows), () => new Array(columns));
+let fgButtons = [];
+let bgButtons = [];
+let cells = Array.from(Array(rows), () => new Array(columns));
 let selected = null;
+let selectedRow = -1;
+let selectedColumn = -1;
 
 function reset() {
   render();
 }
 
 function onButtonClick(button) {
+  if (selected == null) {
+    return;
+  }
   if (button.style.color == "transparent") {
     selected.innerHTML = " ";
   } else {
@@ -707,19 +685,81 @@ function onButtonClick(button) {
   }
 }
 
-function onCellClick(cell) {
+function onCellClick(cell, row, column) {
   if (selected != null) {
     selected.classList.remove("selected");
+    fgButtons[parseInt(fgColors[selectedRow][selectedColumn], 16) + 1].classList.remove("selected");
+    bgButtons[parseInt(bgColors[selectedRow][selectedColumn], 16) + 1].classList.remove("selected");
   }
   if (selected == cell) {
+    selectedRow = -1;
+    selectedColumn = -1;
     selected = null;
     return;
   }
   selected = cell;
+  selectedRow = row;
+  selectedColumn = column;
   selected.classList.add("selected");
+  fgButtons[parseInt(fgColors[selectedRow][selectedColumn], 16) + 1].classList.add("selected");
+  bgButtons[parseInt(bgColors[selectedRow][selectedColumn], 16) + 1].classList.add("selected");
+  //console.log(row + " " + column);
 }
 
-function generate_buttons() {
+function removeColors(cell, prefix) {
+  //magic number: 11 colors 0-10 / 0-a
+  for (let i = 0; i <= 10; i++) {
+    cell.classList.remove(prefix + i.toString(16));
+  }
+}
+
+function onColorClick(button, type, index) {
+  if (selected == null) {
+    return;
+  }
+  let colors = type == "fg" ? fgColors : bgColors;
+  let buttons = type == "fg" ? fgButtons : bgButtons;
+  if (index == colors[selectedRow][selectedColumn]) {
+    return; // we already selected this color
+  }
+  //console.log(button + " " + type + " " + index)
+  buttons[parseInt(colors[selectedRow][selectedColumn], 16) + 1].classList.remove("selected");
+  buttons[parseInt(index, 16) + 1].classList.add("selected");
+  if (index >= 0) {
+    removeColors(cells[selectedRow][selectedColumn], type[0]);
+    cells[selectedRow][selectedColumn].classList.add(type[0] + index);
+    colors[selectedRow][selectedColumn] = index;
+    for (let column = selectedColumn + 1; column < columns; column++) {
+      if (colors[selectedRow][column] >= 0) {
+        break;
+      }
+      removeColors(cells[selectedRow][column], type[0]);
+      cells[selectedRow][column].classList.add(type[0] + index);
+    }
+  } else {
+    removeColors(cells[selectedRow][selectedColumn], type[0]);
+    cells[selectedRow][selectedColumn].classList.add(type[0] + index);
+    colors[selectedRow][selectedColumn] = index;
+    let column = selectedColumn;
+    let color = -1;
+    //find first color
+    for (column = selectedColumn; column >= 0; column--) {
+      if (colors[selectedRow][column] >= 0) {
+        color = colors[selectedRow][column];
+        break;
+      }
+    }
+    for (let column = selectedColumn; column < columns; column++) {
+      if (colors[selectedRow][column] >= 0) {
+        break;
+      }
+      removeColors(cells[selectedRow][column], type[0]);
+      cells[selectedRow][column].classList.add(type[0] + color);
+    }
+  }
+}
+
+function setupChars() {
   let buttonText = "";
   let buttonsElement = document.getElementById("charlist");
   for (let idx in chars) {
@@ -743,27 +783,109 @@ function setupCells() {
   let html = "";
   for (let row = 0; row < rows; row++) {
     for (let column = 0; column < columns; column++) {
+      fgColors[row][column] = -1;
+      bgColors[row][column] = -1;
       html += '<span class="f7 b8"> </span>';
     }
+    fgColors[row][0] = 7;
+    bgColors[row][0] = 8;
     html += "<br>";
   }
   let content = document.getElementById("content");
   content.innerHTML = html;
-  let cells = content.getElementsByTagName("span");
-  for (let i = 0; i < cells.length; i++) {
-    cells[i].addEventListener("click", () => {
-      onCellClick(cells[i]);
+  let cellList = content.getElementsByTagName("span");
+  for (let i = 0; i < cellList.length; i++) {
+    let row = Math.floor(i / columns);
+    let column = i % columns;
+    cells[row][column] = cellList[i];
+    cellList[i].addEventListener("click", () => {
+      onCellClick(cellList[i], row, column);
     });
+    //console.log(cellList[i]);
   }
 }
 
 function setupColors(type) {
   let colorContainer = document.getElementById(type + "Colors");
   let html = "";
+  html += '<button class="button" style="background-color: transparent; color: red;">X</button>\n';
+  html += '<button class="button" style="background-color: transparent;">_</button>\n';
+  html += '<button class="button" style="background-color:#FF0000;">_</button>\n';
+  html += '<button class="button" style="background-color:#00FF00;">_</button>\n';
+  html += '<button class="button" style="background-color:#FFFF00;">_</button>\n';
+  html += '<button class="button" style="background-color:#0000FF;">_</button>\n';
+  html += '<button class="button" style="background-color:#FF00FF;">_</button>\n';
+  html += '<button class="button" style="background-color:#00FFFF;">_</button>\n';
+  html += '<button class="button" style="background-color:#FFFFFF;">_</button>\n';
+  html += '<button class="button" style="background-color:#000000;">_</button>\n';
+  html += '<button class="button" style="background-color:#FF9900;">_</button>\n';
+  html += '<button class="button" style="background-color:#9147FF;">_</button>\n';
+  colorContainer.innerHTML = html;
+
+  let colors = colorContainer.getElementsByTagName("button");
+  let buttons = type == "fg" ? fgButtons : bgButtons;
+  for (let i = 0; i < colors.length; i++) {
+    buttons.push(colors[i]);
+    colors[i].addEventListener("click", () => {
+      onColorClick(colors[i], type, (i - 1).toString(16));
+    });
+  }
+}
+
+function generateJson() {
+  let json = {
+    lines: [
+      "²7³1               ³0 ²8³3                        ",
+      "²7³1   JvPeek TV   ³0 ²8³3 Mittwoch ... 20:00 CET ",
+      "²7³1  Twitch Text  ³0 ²8³3 Sonntag .... 11:00 CET ",
+      "²7³1               ³0 ²8³3                        ",
+      "²0³0                                        ",
+      "²7³8                                        ",
+      "²7³8                                        ",
+      "²7³8                                        ",
+      "²7³8                                        ",
+      "²7³8                                        ",
+      "²7³8                                        ",
+      "²7³8                                        ",
+      "²7³8                                        ",
+      "²7³8                                        ",
+      "²7³8                                        ",
+      "²7³8                                        ",
+      "²7³8                                        ",
+      "²7³8                                        ",
+      "²7³8                                        ",
+      "²7³8                                        ",
+      "²7³8                                        ",
+      "²7³8                                        ",
+      "²7³8                                        ",
+      "²7³8                                        ",
+    ],
+    title: "CHANGE ME",
+  };
+
+  let title = document.getElementById("titleInput").textContent;
+  if (title.trim() == "") {
+    title = "CHANGE ME";
+  }
+  return json;
+}
+
+function save() {
+  let json = generateJson();
+
+  json.title = title;
+  var myBlob = new Blob([JSON.stringify(json, null, 2)], { type: "text/json" });
+  var url = window.URL.createObjectURL(myBlob);
+  var anchor = document.createElement("a");
+  anchor.href = url;
+  anchor.download = "MyPage.json";
+  anchor.click();
+  window.URL.revokeObjectURL(url);
+  document.removeChild(anchor);
 }
 
 window.addEventListener("load", () => {
-  generate_buttons();
+  setupChars();
   setupCells();
   setupColors("fg");
   setupColors("bg");
@@ -777,7 +899,15 @@ window.addEventListener("load", () => {
     },
     false
   );
+
+  document.getElementById("exportButton").addEventListener("click", () => {
+    save();
+  });
   // Prepare and refresh headline
 });
 
-function keyPress(key) {}
+function keyPress(key) {
+  if (selected != null && chars.includes(key)) {
+    selected.innerHTML = key;
+  }
+}
