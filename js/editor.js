@@ -670,10 +670,6 @@ let selected = null;
 let selectedRow = -1;
 let selectedColumn = -1;
 
-function reset() {
-  render();
-}
-
 function onButtonClick(button) {
   if (selected == null) {
     return;
@@ -685,12 +681,24 @@ function onButtonClick(button) {
   }
 }
 
-function onCellClick(cell, row, column) {
+function removeSelection() {
   if (selected != null) {
     selected.classList.remove("selected");
     fgButtons[parseInt(fgColors[selectedRow][selectedColumn], 16) + 1].classList.remove("selected");
     bgButtons[parseInt(bgColors[selectedRow][selectedColumn], 16) + 1].classList.remove("selected");
   }
+}
+
+function addSelection() {
+  if (selected != null) {
+    selected.classList.add("selected");
+    fgButtons[parseInt(fgColors[selectedRow][selectedColumn], 16) + 1].classList.add("selected");
+    bgButtons[parseInt(bgColors[selectedRow][selectedColumn], 16) + 1].classList.add("selected");
+  }
+}
+
+function onCellClick(cell, row, column) {
+  removeSelection();
   if (selected == cell) {
     selectedRow = -1;
     selectedColumn = -1;
@@ -700,9 +708,7 @@ function onCellClick(cell, row, column) {
   selected = cell;
   selectedRow = row;
   selectedColumn = column;
-  selected.classList.add("selected");
-  fgButtons[parseInt(fgColors[selectedRow][selectedColumn], 16) + 1].classList.add("selected");
-  bgButtons[parseInt(bgColors[selectedRow][selectedColumn], 16) + 1].classList.add("selected");
+  addSelection()
   //console.log(row + " " + column);
 }
 
@@ -832,6 +838,22 @@ function setupColors(type) {
   }
 }
 
+function reset() {
+  for (let row = 0; row < rows; row++) {
+    for (let column = 0; column < columns; column++) {
+      fgColors[row][column] = -1;
+      bgColors[row][column] = -1;
+      removeColors(cells[row][column], "f");
+      removeColors(cells[row][column], "b");
+      cells[row][column].innerHTML = " ";
+      cells[row][column].classList.add("f7");
+      cells[row][column].classList.add("b8");
+    }
+    fgColors[row][0] = 7;
+    bgColors[row][0] = 8;
+  }
+}
+
 function generateJson() {
   let json = {
     lines: [
@@ -840,40 +862,36 @@ function generateJson() {
       "²7³1  Twitch Text  ³0 ²8³3 Sonntag .... 11:00 CET ",
       "²7³1               ³0 ²8³3                        ",
       "²0³0                                        ",
-      "²7³8                                        ",
-      "²7³8                                        ",
-      "²7³8                                        ",
-      "²7³8                                        ",
-      "²7³8                                        ",
-      "²7³8                                        ",
-      "²7³8                                        ",
-      "²7³8                                        ",
-      "²7³8                                        ",
-      "²7³8                                        ",
-      "²7³8                                        ",
-      "²7³8                                        ",
-      "²7³8                                        ",
-      "²7³8                                        ",
-      "²7³8                                        ",
-      "²7³8                                        ",
-      "²7³8                                        ",
-      "²7³8                                        ",
-      "²7³8                                        ",
     ],
     title: "CHANGE ME",
   };
+  for (let row = 0; row < rows; row++) {
+    let rowString = "";
+    for (let column = 0; column < columns; column++) {
+      let fgColor = fgColors[row][column];
+      if (fgColor >= 0) {
+        rowString += "²" + fgColor;
+      }
+      let bgColor = bgColors[row][column];
+      if (bgColor >= 0) {
+        rowString += "³" + bgColor;
+      }
+      rowString += cells[row][column].innerHTML;
+    }
+    json.lines.push(rowString);
+  }
 
   let title = document.getElementById("titleInput").textContent;
   if (title.trim() == "") {
     title = "CHANGE ME";
   }
+  json.title = title;
   return json;
 }
 
 function save() {
   let json = generateJson();
 
-  json.title = title;
   var myBlob = new Blob([JSON.stringify(json, null, 2)], { type: "text/json" });
   var url = window.URL.createObjectURL(myBlob);
   var anchor = document.createElement("a");
@@ -892,19 +910,47 @@ window.addEventListener("load", () => {
 
   //getPageImporter();
   // Handle keys
-  document.addEventListener(
-    "keypress",
-    (event) => {
-      keyPress(event.key);
-    },
-    false
-  );
+  document.addEventListener("keypress", (event) => {
+    keyPress(event.key);
+  });
+  document.addEventListener("keydown", (event) => {
+    keyDown(event.key);
+  });
 
+  document.getElementById("resetButton").addEventListener("click", () => {
+    reset();
+  });
   document.getElementById("exportButton").addEventListener("click", () => {
     save();
   });
   // Prepare and refresh headline
 });
+
+function keyDown(key) {
+  if (selected == null) {
+    return;
+  }
+  removeSelection();
+  if (key == "ArrowLeft") {
+    if (selectedColumn > 0) {
+      selectedColumn--;
+    }
+  } else if (key == "ArrowUp") {
+    if (selectedRow > 0) {
+      selectedRow--;
+    }
+  } else if (key == "ArrowRight") {
+    if (selectedColumn < columns - 1) {
+      selectedColumn++;
+    }
+  } else if (key == "ArrowDown") {
+    if (selectedRow < rows - 1) {
+      selectedRow++;
+    }
+  }
+  selected = cells[selectedRow][selectedColumn];
+  addSelection();
+}
 
 function keyPress(key) {
   if (selected != null && chars.includes(key)) {
