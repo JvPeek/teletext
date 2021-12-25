@@ -655,9 +655,12 @@ let chars = [
   "&#xe37f;",
 ];
 
+import DnDFileController from './util/DnDFileController.js'
+
 //usable lines
 //line width: 40
-
+// 5 header lines that are not editable!
+const headerLines = 5;
 const rows = 20;
 const columns = 40;
 
@@ -708,7 +711,7 @@ function onCellClick(cell, row, column) {
   selected = cell;
   selectedRow = row;
   selectedColumn = column;
-  addSelection()
+  addSelection();
   //console.log(row + " " + column);
 }
 
@@ -718,6 +721,36 @@ function removeColors(cell, prefix) {
     cell.classList.remove(prefix + i.toString(16));
   }
 }
+
+function setColor(selectedRow, selectedColumn, type, index) {
+  let colors = type == "fg" ? fgColors : bgColors;
+  removeColors(cells[selectedRow][selectedColumn], type[0]);
+  let color  = -1
+  cells[selectedRow][selectedColumn].classList.add(type[0] + index);
+  colors[selectedRow][selectedColumn] = index;
+  if (index >= 0) {
+    color = index
+
+  } else {
+    let column = selectedColumn;
+    //find first color
+    for (column = selectedColumn; column >= 0; column--) {
+      if (colors[selectedRow][column] >= 0) {
+        color = colors[selectedRow][column];
+        break;
+      }
+    }
+    removeColors(cells[selectedRow][selectedColumn], type[0]);
+    cells[selectedRow][selectedColumn].classList.add(type[0] + color);
+  }
+  for (let column = selectedColumn + 1; column < columns; column++) {
+    if (colors[selectedRow][column] >= 0) {
+      break;
+    }
+    removeColors(cells[selectedRow][column], type[0]);
+    cells[selectedRow][column].classList.add(type[0] + color);
+  }
+} 
 
 function onColorClick(button, type, index) {
   if (selected == null) {
@@ -731,38 +764,7 @@ function onColorClick(button, type, index) {
   //console.log(button + " " + type + " " + index)
   buttons[parseInt(colors[selectedRow][selectedColumn], 16) + 1].classList.remove("selected");
   buttons[parseInt(index, 16) + 1].classList.add("selected");
-  if (index >= 0) {
-    removeColors(cells[selectedRow][selectedColumn], type[0]);
-    cells[selectedRow][selectedColumn].classList.add(type[0] + index);
-    colors[selectedRow][selectedColumn] = index;
-    for (let column = selectedColumn + 1; column < columns; column++) {
-      if (colors[selectedRow][column] >= 0) {
-        break;
-      }
-      removeColors(cells[selectedRow][column], type[0]);
-      cells[selectedRow][column].classList.add(type[0] + index);
-    }
-  } else {
-    removeColors(cells[selectedRow][selectedColumn], type[0]);
-    cells[selectedRow][selectedColumn].classList.add(type[0] + index);
-    colors[selectedRow][selectedColumn] = index;
-    let column = selectedColumn;
-    let color = -1;
-    //find first color
-    for (column = selectedColumn; column >= 0; column--) {
-      if (colors[selectedRow][column] >= 0) {
-        color = colors[selectedRow][column];
-        break;
-      }
-    }
-    for (let column = selectedColumn; column < columns; column++) {
-      if (colors[selectedRow][column] >= 0) {
-        break;
-      }
-      removeColors(cells[selectedRow][column], type[0]);
-      cells[selectedRow][column].classList.add(type[0] + color);
-    }
-  }
+  setColor(selectedRow, selectedColumn, type, index)
 }
 
 function setupChars() {
@@ -854,6 +856,51 @@ function reset() {
   }
 }
 
+function parseJson(json) {
+  //we expect a json file in the form of template.json
+  //console.log(json)
+  reset()
+  if (json.title != undefined && json.title != null) {
+    document.getElementById("titleInput").value = json.title;
+    //console.log("found title: " + json.title)
+    //console.log(document.getElementById("titleInput"))
+  }
+
+  if (Array.isArray(json.lines)) {
+    console.log(json.lines)
+    if (json.lines.length <= 5) {
+      return;
+    }
+    for (let hrow = 5; hrow < Math.min(json.lines.length, rows + 5); hrow++) {
+      let chars = 0;
+      let line = json.lines[hrow];
+      let row = hrow - 5
+      //console.log(row + " " + line)
+      for (let column = 0; column < line.length; column++) {
+        if (line[column] == "²") {
+          //console.log("setting front color of " + row + " " + column + " to " + line[column])
+          column++;
+          let color = line[column];
+          setColor(row, chars, "fg", color)
+        } else if (line[column] == "³") {
+          //console.log("setting background color of " + row + " " + column + " to " + line[column])
+          column++;
+          let color = line[column];
+          setColor(row, chars, "bg", color)
+          cells[row][chars].classList.add("b" + color);
+        } else {
+          //console.log("setting " + row + " " + column + " to " + line[column])
+          cells[row][chars].innerHTML = line[column];
+          chars++;
+          if (chars >= columns) {
+            break;
+          }
+        }
+      }
+    }
+  }
+}
+
 function generateJson() {
   let json = {
     lines: [
@@ -881,7 +928,7 @@ function generateJson() {
     json.lines.push(rowString);
   }
 
-  let title = document.getElementById("titleInput").textContent;
+  let title = document.getElementById("titleInput").value;
   if (title.trim() == "") {
     title = "CHANGE ME";
   }
@@ -922,6 +969,22 @@ window.addEventListener("load", () => {
   });
   document.getElementById("exportButton").addEventListener("click", () => {
     save();
+  });
+
+  //drop listener
+  new DnDFileController("html", function (files) {
+    var f = files[0];
+
+    if (!f.type.match("application/json")) {
+      alert("Not a JSON file!");
+    }
+
+    var reader = new FileReader();
+    reader.onloadend = function (e) {
+      var result = JSON.parse(this.result);
+      parseJson(result);
+    };
+    reader.readAsText(f);
   });
   // Prepare and refresh headline
 });
