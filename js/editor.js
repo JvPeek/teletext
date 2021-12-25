@@ -666,49 +666,123 @@ let bgColors = Array.from(Array(rows), () => new Array(columns));
 let fgButtons = [];
 let bgButtons = [];
 let cells = Array.from(Array(rows), () => new Array(columns));
-let selected = null;
-let selectedRow = -1;
-let selectedColumn = -1;
+let lastSelected = null; //needed for shift click
+let selected = [];
+
+function checkMove(event) {
+  return false;
+}
+
+function move(dir, cells) {
+  switch (dir) {
+    case "up":
+      {
+      }
+      break;
+    case "down":
+      {
+      }
+      break;
+    case "left":
+      {
+      }
+      break;
+    case "right":
+      {
+      }
+      break;
+  }
+}
 
 function onButtonClick(button) {
-  if (selected == null) {
+  if (selected.length == 0) {
     return;
   }
+  let text = "";
   if (button.style.color == "transparent") {
-    selected.innerHTML = " ";
+    text = " ";
   } else {
-    selected.innerHTML = button.innerHTML;
+    text = button.innerHTML;
+  }
+  for (let i = 0; i < selected.length; i++) {
+    selected[i].innerHTML = text;
   }
 }
 
-function removeSelection() {
-  if (selected != null) {
-    selected.classList.remove("selected");
-    fgButtons[parseInt(fgColors[selectedRow][selectedColumn], 16) + 1].classList.remove("selected");
-    bgButtons[parseInt(bgColors[selectedRow][selectedColumn], 16) + 1].classList.remove("selected");
+function updateSelection(oldSelection, newSelection) {
+  let toRemove = oldSelection.filter((value) => {
+    return !newSelection.includes(value);
+  });
+  for (let i = 0; i < toRemove.length; i++) {
+    toRemove[i].classList.remove("selected");
   }
+  for (let i = 0; i < newSelection.length; i++) {
+    newSelection[i].classList.add("selected");
+  }
+  for (let i = 0; i < fgButtons.length; i++) {
+    fgButtons[i].classList.remove("selected");
+  }
+  for (let i = 0; i < bgButtons.length; i++) {
+    bgButtons[i].classList.remove("selected");
+  }
+  if (newSelection.length == 1) {
+    let row = newSelection[0].row;
+    let column = newSelection[0].column;
+    fgButtons[parseInt(fgColors[row][column], 16) + 1].classList.add("selected");
+    bgButtons[parseInt(bgColors[row][column], 16) + 1].classList.add("selected");
+  }
+  selected = newSelection;
 }
 
-function addSelection() {
-  if (selected != null) {
-    selected.classList.add("selected");
-    fgButtons[parseInt(fgColors[selectedRow][selectedColumn], 16) + 1].classList.add("selected");
-    bgButtons[parseInt(bgColors[selectedRow][selectedColumn], 16) + 1].classList.add("selected");
+function multiSelection(cell, event) {
+  if (!event.shiftKey && !event.ctrlKey) {
+    return false;
   }
+  if (cell == lastSelected) {
+    return false;
+  }
+  let oldSelected = selected;
+  let newSelected = [];
+  if (event.shiftKey) {
+    let startRow = Math.min(lastSelected.row, cell.row);
+    let endRow = Math.max(lastSelected.row, cell.row);
+    let startColumn = Math.min(lastSelected.column, cell.column);
+    let endColumn = Math.max(lastSelected.column, cell.column);
+    newSelected = cells.filter((value) => {
+      return value.row >= startRow && value.row <= endRow && value.column >= startColumn && value.column <= endColumn;
+    });
+  } else {
+    newSelected = [cell];
+  }
+
+  //remove selection
+
+  if (event.ctrlKey) {
+    selected = selected.concat(newSelected);
+    selected = selected.filter((item, pos) => selected.indexOf(item) === pos);
+  } else {
+    selected = newSelected;
+  }
+  updateSelection(oldSelected, selected);
+  return true;
 }
 
-function onCellClick(cell, row, column) {
-  removeSelection();
-  if (selected == cell) {
-    selectedRow = -1;
-    selectedColumn = -1;
-    selected = null;
+function onCellClick(cell, event) {
+  //console.log(cell.row + " " + cell.column)
+  if (multiSelection(event)) {
     return;
   }
-  selected = cell;
-  selectedRow = row;
-  selectedColumn = column;
-  addSelection()
+  let oldSelected = selected;
+  lastSelected = cell;
+  if (selected.includes(cell)) {
+    //todo find better method to remove from element
+    selected = selected.filter((value) => {
+      return value != cell;
+    });
+  } else {
+    selected.push(cell);
+  }
+  updateSelection(oldSelected, selected);
   //console.log(row + " " + column);
 }
 
@@ -720,7 +794,7 @@ function removeColors(cell, prefix) {
 }
 
 function onColorClick(button, type, index) {
-  if (selected == null) {
+  if (selected.length == 0) {
     return;
   }
   let colors = type == "fg" ? fgColors : bgColors;
@@ -803,9 +877,12 @@ function setupCells() {
   for (let i = 0; i < cellList.length; i++) {
     let row = Math.floor(i / columns);
     let column = i % columns;
-    cells[row][column] = cellList[i];
-    cellList[i].addEventListener("click", () => {
-      onCellClick(cellList[i], row, column);
+    let cell = cellList[i];
+    cell.column = column;
+    cell.row = row;
+    cells[row][column] = cell;
+    cell.addEventListener("click", (event) => {
+      onCellClick(cell, event);
     });
     //console.log(cellList[i]);
   }
@@ -902,6 +979,11 @@ function save() {
   document.removeChild(anchor);
 }
 
+// disable text selection
+document.onselectstart = function () {
+  return false;
+};
+
 window.addEventListener("load", () => {
   setupChars();
   setupCells();
@@ -930,6 +1012,9 @@ function keyDown(key) {
   if (selected == null) {
     return;
   }
+  if (checkMove) {
+    return;
+  }
   removeSelection();
   if (key == "ArrowLeft") {
     if (selectedColumn > 0) {
@@ -955,5 +1040,14 @@ function keyDown(key) {
 function keyPress(key) {
   if (selected != null && chars.includes(key)) {
     selected.innerHTML = key;
+    //move cursor
+    selectedColumn++;
+    if (selectedColumn >= columns) {
+      selectedColumn = 0;
+      selectedRow++;
+      if (selectedRow >= rows) {
+        selectedRow = rows - 1; //no wrap around
+      }
+    }
   }
 }
