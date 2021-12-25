@@ -1,0 +1,39 @@
+@import "main.css";
+
+#charlist span {
+  display: inline-block;
+  border: 1px solid blue;
+  margin-top: 4px;
+  font-family: "European Teletext";
+  font-size: 22px;
+  height: 22px;
+
+}
+.button {
+  border: 2px solid black;
+  color: transparent;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+}
+
+#editor {
+  border: 2px solid black;
+  line-height: 20px;
+}
+
+.selected {
+  border: 2px solid blue;
+}
+
+#teletext {
+  top: auto;
+  width: auto;
+  height: auto;
+}
+
+html {
+  overflow: auto;
+  color: #ffffff;
+}
