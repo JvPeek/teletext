@@ -655,7 +655,7 @@ let chars = [
   "&#xe37f;",
 ];
 
-import DnDFileController from './util/DnDFileController.js'
+import DnDFileController from "./util/DnDFileController.js";
 
 //usable lines
 //line width: 40
@@ -673,28 +673,137 @@ let lastSelected = null; //needed for shift click
 let selected = [];
 
 function checkMove(event) {
+  //shift move add to selection
+  //shift + ctrl swap rows
   return false;
 }
 
-function move(dir, cells) {
-  switch (dir) {
-    case "up":
+function move(event) {
+  let oldSelection = selected;
+  let newSelection = [];
+  let dr = 0;
+  let dc = 0;
+  let key = event.key;
+  switch (key) {
+    case "ArrowUp":
       {
+        dr = -1;
       }
       break;
-    case "down":
+    case "ArrowDown":
       {
+        dr = +1;
       }
       break;
-    case "left":
+    case "ArrowLeft":
       {
+        dc = -1;
       }
       break;
-    case "right":
+    case "ArrowRight":
       {
+        dc = 1;
       }
       break;
+    default:
+      return;
   }
+
+  for (let i = 0; i < selected.length; i++) {
+    let cell = selected[i];
+    let newRow = cell.row + dr;
+    let newColumn = cell.column + dc;
+    if (newRow >= 0 && newRow < rows && newColumn >= 0 && newColumn < columns) {
+      let newCell = cells[newRow][newColumn];
+      if (cell == lastSelected) {
+        lastSelected = newCell;
+      }
+      if (!event.ctrlKey || event.shiftKey) {
+        if (!newSelection.includes(newCell)) {
+          newSelection.push(newCell);
+        }
+        if (event.shiftKey && !newSelection.includes(cell)) {
+          newSelection.push(cell);
+        }
+      } else {
+        if (selected.includes(newCell)) {
+          newSelection.push(newCell);
+        }
+      }
+    }
+  }
+
+  if (event.shiftKey && event.ctrlKey) {
+    let savedText = Array.from(Array(rows), () => new Array(columns));
+    let savedFg = Array.from(Array(rows), () => new Array(columns));
+    let savedBg = Array.from(Array(rows), () => new Array(columns));
+    let selection = newSelection;
+    newSelection = [];
+
+    for (let i = 0; i < selection.length; i++) {
+      let cell = selection[i];
+      let newRow = cell.row - dr;
+      let newColumn = cell.column - dc;
+      if (newRow >= 0 && newRow < rows && newColumn >= 0 && newColumn < columns) {
+        let newCell = cells[newRow][newColumn];
+        if (selection.includes(newCell)) {
+          savedText[cell.row][cell.column] = newCell.innerHTML;
+          savedFg[cell.row][cell.column] = fgColors[newRow][newColumn];
+          savedBg[cell.row][cell.column] = bgColors[newRow][newColumn];
+          newSelection.push(cell);
+        }
+      }
+      if (savedText[cell.row][cell.column] == undefined || savedText[cell.row][cell.column] == null) {
+        newRow = cell.row + dr;
+        newColumn = cell.column + dc;
+        let newCell = cells[newRow][newColumn];
+        while (newRow >= 0 && newRow < rows && newColumn >= 0 && newColumn < columns && selection.includes(newCell)) {
+          newRow += dr;
+          newColumn += dc;
+          if (newRow < 0 || newRow >= rows || newColumn < 0 || newColumn >= columns) {
+            break;
+          }
+          newCell = cells[newRow][newColumn];
+        }
+        newRow -= dr;
+        newColumn -= dc;
+        newCell = cells[newRow][newColumn];
+
+        if (newCell != null && !selected.includes(newCell)) {
+          savedText[cell.row][cell.column] = newCell.innerHTML;
+          savedFg[cell.row][cell.column] = fgColors[newRow][newColumn];
+          savedBg[cell.row][cell.column] = bgColors[newRow][newColumn];
+        } else {
+          console.log(cell.row + " " + cell.column);
+          console.log(bgColors);
+          savedText[cell.row][cell.column] = " ";
+          savedFg[cell.row][cell.column] = -1;
+          savedBg[cell.row][cell.column] = -1;
+        }
+      }
+    }
+    let combined = selected.concat(selection);
+    for (let i = 0; i < combined.length; i++) {
+      let cell = combined[i];
+      let text = savedText[cell.row][cell.column];
+      let fgColor = savedFg[cell.row][cell.column];
+      let bgColor = savedBg[cell.row][cell.column];
+      if (text == undefined || text == null) {
+        text = " ";
+      }
+      if (fgColor == undefined || fgColor == null) {
+        fgColor = -1;
+      }
+      if (bgColor == undefined || bgColor == null) {
+        bgColor = -1;
+      }
+      cell.innerHTML = text;
+      setColor(cell.row, cell.column, "fg", fgColor);
+      setColor(cell.row, cell.column, "bg", bgColor);
+    }
+  }
+
+  updateSelection(newSelection);
 }
 
 function onButtonClick(button) {
@@ -712,8 +821,11 @@ function onButtonClick(button) {
   }
 }
 
-function updateSelection(oldSelection, newSelection) {
-  let toRemove = oldSelection.filter((value) => {
+function updateSelection(newSelection) {
+  //let toRemove = oldSelection.filter((value) => {
+  //  return !newSelection.includes(value);
+  //});
+  let toRemove = selected.filter((value) => {
     return !newSelection.includes(value);
   });
   for (let i = 0; i < toRemove.length; i++) {
@@ -728,9 +840,9 @@ function updateSelection(oldSelection, newSelection) {
   for (let i = 0; i < bgButtons.length; i++) {
     bgButtons[i].classList.remove("selected");
   }
-  if (newSelection.length == 1) {
-    let row = newSelection[0].row;
-    let column = newSelection[0].column;
+  if (lastSelected != null && selected.length > 0) {
+    let row = lastSelected.row;
+    let column = lastSelected.column;
     fgButtons[parseInt(fgColors[row][column], 16) + 1].classList.add("selected");
     bgButtons[parseInt(bgColors[row][column], 16) + 1].classList.add("selected");
   }
@@ -744,16 +856,16 @@ function multiSelection(cell, event) {
   if (cell == lastSelected) {
     return false;
   }
-  let oldSelected = selected;
   let newSelected = [];
   if (event.shiftKey) {
     let startRow = Math.min(lastSelected.row, cell.row);
     let endRow = Math.max(lastSelected.row, cell.row);
     let startColumn = Math.min(lastSelected.column, cell.column);
     let endColumn = Math.max(lastSelected.column, cell.column);
-    newSelected = cells.filter((value) => {
+    newSelected = cells.flat().filter((value) => {
       return value.row >= startRow && value.row <= endRow && value.column >= startColumn && value.column <= endColumn;
     });
+    console.log(newSelected);
   } else {
     newSelected = [cell];
   }
@@ -761,31 +873,31 @@ function multiSelection(cell, event) {
   //remove selection
 
   if (event.ctrlKey) {
-    selected = selected.concat(newSelected);
-    selected = selected.filter((item, pos) => selected.indexOf(item) === pos);
-  } else {
-    selected = newSelected;
+    newSelected = selected.concat(newSelected);
+    newSelected = newSelected.filter((item, pos) => newSelected.indexOf(item) === pos);
   }
-  updateSelection(oldSelected, selected);
+  updateSelection(newSelected);
   return true;
 }
 
 function onCellClick(cell, event) {
   //console.log(cell.row + " " + cell.column)
-  if (multiSelection(event)) {
+  if (multiSelection(cell, event)) {
+    lastSelected = cell;
     return;
   }
-  let oldSelected = selected;
   lastSelected = cell;
+  let oldSelected = selected;
+  let newSelected = selected;
   if (selected.includes(cell)) {
     //todo find better method to remove from element
-    selected = selected.filter((value) => {
+    newSelected = selected.filter((value) => {
       return value != cell;
     });
   } else {
-    selected.push(cell);
+    newSelected = [cell];
   }
-  updateSelection(oldSelected, selected);
+  updateSelection(newSelected);
   //console.log(row + " " + column);
 }
 
@@ -799,17 +911,17 @@ function removeColors(cell, prefix) {
 function setColor(selectedRow, selectedColumn, type, index) {
   let colors = type == "fg" ? fgColors : bgColors;
   removeColors(cells[selectedRow][selectedColumn], type[0]);
-  let color  = -1
+  let intColor = parseInt(index, 16);
+  let color = -1;
   cells[selectedRow][selectedColumn].classList.add(type[0] + index);
   colors[selectedRow][selectedColumn] = index;
-  if (index >= 0) {
-    color = index
-
+  if (intColor >= 0) {
+    color = index;
   } else {
     let column = selectedColumn;
     //find first color
     for (column = selectedColumn; column >= 0; column--) {
-      if (colors[selectedRow][column] >= 0) {
+      if (parseInt(colors[selectedRow][column], 16) >= 0) {
         color = colors[selectedRow][column];
         break;
       }
@@ -818,13 +930,13 @@ function setColor(selectedRow, selectedColumn, type, index) {
     cells[selectedRow][selectedColumn].classList.add(type[0] + color);
   }
   for (let column = selectedColumn + 1; column < columns; column++) {
-    if (colors[selectedRow][column] >= 0) {
+    if (parseInt(colors[selectedRow][column], 16) >= 0) {
       break;
     }
     removeColors(cells[selectedRow][column], type[0]);
     cells[selectedRow][column].classList.add(type[0] + color);
   }
-} 
+}
 
 function onColorClick(button, type, index) {
   if (selected.length == 0) {
@@ -834,13 +946,21 @@ function onColorClick(button, type, index) {
 
   let colors = type == "fg" ? fgColors : bgColors;
   let buttons = type == "fg" ? fgButtons : bgButtons;
-  if (index == colors[selectedRow][selectedColumn]) {
-    return; // we already selected this color
+  buttons[parseInt(colors[lastSelected.row][lastSelected.column], 16) + 1].classList.remove("selected");
+  buttons[parseInt(index, 16) + 1].classList.add("selected");
+  if (selected.length == 1) {
+    let cell = selected[0];
+    if (index == colors[cell.row][cell.column]) {
+      return; // we already selected this color
+    }
+    setColor(cell.row, cell.column, type, index);
+  } else {
+    for (let i = 0; i < selected.length; i++) {
+      let cell = selected[i];
+      setColor(cell.row, cell.column, type, index);
+    }
   }
   //console.log(button + " " + type + " " + index)
-  buttons[parseInt(colors[selectedRow][selectedColumn], 16) + 1].classList.remove("selected");
-  buttons[parseInt(index, 16) + 1].classList.add("selected");
-  setColor(selectedRow, selectedColumn, type, index)
 }
 
 function setupChars() {
@@ -938,7 +1058,7 @@ function reset() {
 function parseJson(json) {
   //we expect a json file in the form of template.json
   //console.log(json)
-  reset()
+  reset();
   if (json.title != undefined && json.title != null) {
     document.getElementById("titleInput").value = json.title;
     //console.log("found title: " + json.title)
@@ -946,26 +1066,26 @@ function parseJson(json) {
   }
 
   if (Array.isArray(json.lines)) {
-    console.log(json.lines)
+    console.log(json.lines);
     if (json.lines.length <= 5) {
       return;
     }
     for (let hrow = 5; hrow < Math.min(json.lines.length, rows + 5); hrow++) {
       let chars = 0;
       let line = json.lines[hrow];
-      let row = hrow - 5
+      let row = hrow - 5;
       //console.log(row + " " + line)
       for (let column = 0; column < line.length; column++) {
         if (line[column] == "²") {
           //console.log("setting front color of " + row + " " + column + " to " + line[column])
           column++;
           let color = line[column];
-          setColor(row, chars, "fg", color)
+          setColor(row, chars, "fg", color);
         } else if (line[column] == "³") {
           //console.log("setting background color of " + row + " " + column + " to " + line[column])
           column++;
           let color = line[column];
-          setColor(row, chars, "bg", color)
+          setColor(row, chars, "bg", color);
           cells[row][chars].classList.add("b" + color);
         } else {
           //console.log("setting " + row + " " + column + " to " + line[column])
@@ -1045,7 +1165,7 @@ window.addEventListener("load", () => {
     keyPress(event.key);
   });
   document.addEventListener("keydown", (event) => {
-    keyDown(event.key);
+    keyDown(event);
   });
 
   document.getElementById("resetButton").addEventListener("click", () => {
@@ -1073,46 +1193,33 @@ window.addEventListener("load", () => {
   // Prepare and refresh headline
 });
 
-function keyDown(key) {
+function keyDown(event) {
   if (selected == null) {
     return;
   }
-  if (checkMove) {
-    return;
-  }
-  removeSelection();
-  if (key == "ArrowLeft") {
-    if (selectedColumn > 0) {
-      selectedColumn--;
-    }
-  } else if (key == "ArrowUp") {
-    if (selectedRow > 0) {
-      selectedRow--;
-    }
-  } else if (key == "ArrowRight") {
-    if (selectedColumn < columns - 1) {
-      selectedColumn++;
-    }
-  } else if (key == "ArrowDown") {
-    if (selectedRow < rows - 1) {
-      selectedRow++;
-    }
-  }
-  selected = cells[selectedRow][selectedColumn];
-  addSelection();
+  move(event);
 }
 
 function keyPress(key) {
-  if (selected != null && chars.includes(key)) {
-    selected.innerHTML = key;
+  if (selected.length > 0 && chars.includes(key)) {
+    for (let i = 0; i < selected.length; i++) {
+      selected[i].innerHTML = key;
+    }
     //move cursor
-    selectedColumn++;
-    if (selectedColumn >= columns) {
-      selectedColumn = 0;
-      selectedRow++;
-      if (selectedRow >= rows) {
-        selectedRow = rows - 1; //no wrap around
+    if (selected.length == 1) {
+      let column = selected[0].column;
+      let row = selected[0].row;
+      column++;
+      if (column >= columns) {
+        column = 0;
+        row = cell.row + 1;
+        if (row >= rows) {
+          row = rows - 1; //no wrap around
+        }
       }
+      let cell = cells[row][column];
+      lastSelected = cell;
+      updateSelection([cell]);
     }
   }
 }
