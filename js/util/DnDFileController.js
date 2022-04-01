@@ -20,7 +20,7 @@ function DnDFileController(selector, onDropCallback) {
     e.stopPropagation();
     e.preventDefault();
     el_.classList.remove('dropping');
-    onDropCallback(e.dataTransfer.files);
+    onDropCallback(e.dataTransfer);
   };
   el_.addEventListener('dragenter', this.dragenter, false);
   el_.addEventListener('dragover', this.dragover, false);
