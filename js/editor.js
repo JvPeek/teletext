@@ -1176,19 +1176,26 @@ window.addEventListener("load", () => {
   });
 
   //drop listener
-  new DnDFileController("html", function (files) {
+  new DnDFileController("html", function (data) {
+    let files = data.files
     var f = files[0];
-
-    if (!f.type.match("application/json")) {
-      alert("Not a JSON file!");
+    
+    //console.log(f)
+    let str = data.getData("text/plain")
+    if (f != undefined) {
+      if (!f.type.match('application/json')) {
+        alert('Not a JSON file!');
+      }
+  
+      var reader = new FileReader();
+      reader.onloadend = function(e) {
+        var result = JSON.parse(this.result);
+        parseJson(result)
+      };
+      reader.readAsText(f);
+    }else if(str != undefined && str != "") {
+      parseJson(JSON.parse(str))
     }
-
-    var reader = new FileReader();
-    reader.onloadend = function (e) {
-      var result = JSON.parse(this.result);
-      parseJson(result);
-    };
-    reader.readAsText(f);
   });
   // Prepare and refresh headline
 });
