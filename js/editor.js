@@ -661,7 +661,7 @@ import DnDFileController from "./util/DnDFileController.js";
 //line width: 40
 // 5 header lines that are not editable!
 const headerLines = 5;
-const rows = 20;
+const rows = 19;
 const columns = 40;
 
 let fgColors = Array.from(Array(rows), () => new Array(columns));
