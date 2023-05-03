@@ -27,7 +27,7 @@ function parseEntry($entry)
     if ($now->modify("+1 week") < $nextOccasion) {
         $nextOccasion->modify("-1 week");
     }
-    return array("summary" => $thisEntryArray["SUMMARY"], "time" => $time, "day" => $day, "next" => $nextOccasion->format("c"),"nextRaw" => $nextOccasion, "nextunix" => $nextOccasion->format("U"));
+    return array("summary" => $thisEntryArray["SUMMARY"], "time" => $time, "day" => $day, "next" => $nextOccasion->format("c"),"nextRaw" => $nextOccasion, "nextUnix" => $nextOccasion->format("U"));
 }
 $url = "https://api.twitch.tv/helix/schedule/icalendar?broadcaster_id=549112855";
 $file_contents = file_get_contents($url);
