@@ -5,12 +5,12 @@
     "²7³1  Twitch Text  ³0 ²8³3 Sonntag .... 11:00 CET ",
     "²7³1               ³0 ²8³3                        ",
     "²7³0                                        ",
-    "²7³8             Kronenpunkte.              ",
     "²7³8                                        ",
-    "²7³8 Der Teilnehmer mit den meisten Punkten ",
-    "²7³8      am Ende des Monats wird zum       ",
-    "²7³8                                        ",
-    "²7³8        MITARBEITER DES MONATS!         ",
+    "²7³8                                   ",
+    "²7³8                Erster          ",
+    "²7³8                                     ",
+    "²7³8                                  ",
+    "²7³8                                     ",
     "²7³8                                        ",
     "²3³8  1 ................................. _ ",
     "²7³8                                        ",
@@ -18,14 +18,14 @@
     "²1³8  3 ................................. _ ",
     "²1³8  4 ................................. _ ",
     "²1³8  5 ................................. _ ",
-    "²7³8                                        ",
-    "²7³8                                        ",
-    "²7³8                                        ",
-    "²7³8   Aktueller Mitarbeiter des Monats:    ",
-    "²7³8                                        ",
+    "²1³8  6 ................................. _ ",
+    "²1³8  7 ................................. _ ",
+    "²1³8  8 ................................. _ ",
+    "²1³8  9 ................................. _ ",
+    "²1³8 10 ................................. _ ",
     "²7³8                                        "
   ],
-  "title": "vipscore",
+  "title": "erster",
   "dynamicSections": [
     {
       "id": "name1",
@@ -37,7 +37,7 @@
     {
       "id": "score1",
       "row": 12,
-      "from": 41,
+      "from": 40,
       "to": 45,
       "align": "right"
     },
@@ -51,7 +51,7 @@
     {
       "id": "score2",
       "row": 14,
-      "from": 41,
+      "from": 40,
       "to": 45,
       "align": "right"
     },
@@ -65,7 +65,7 @@
     {
       "id": "score3",
       "row": 15,
-      "from": 41,
+      "from": 40,
       "to": 45,
       "align": "right"
     },
@@ -79,7 +79,7 @@
     {
       "id": "score4",
       "row": 16,
-      "from": 41,
+      "from": 40,
       "to": 45,
       "align": "right"
     },
@@ -93,15 +93,78 @@
     {
       "id": "score5",
       "row": 17,
-      "from": 41,
+      "from": 40,
       "to": 45,
       "align": "right"
     },
     {
-      "id": "mdm",
+      "id": "name6",
+      "row": 18,
+      "from": 10,
+      "to": 42,
+      "align": "left"
+    },
+    {
+      "id": "score6",
+      "row": 18,
+      "from": 40,
+      "to": 45,
+      "align": "right"
+    },
+    {
+      "id": "name7",
+      "row": 19,
+      "from": 10,
+      "to": 42,
+      "align": "left"
+    },
+    {
+      "id": "score7",
+      "row": 19,
+      "from": 40,
+      "to": 45,
+      "align": "right"
+    },
+    {
+      "id": "name8",
+      "row": 20,
+      "from": 10,
+      "to": 42,
+      "align": "left"
+    },
+    {
+      "id": "score8",
+      "row": 20,
+      "from": 40,
+      "to": 45,
+      "align": "right"
+    },
+    {
+      "id": "name9",
+      "row": 21,
+      "from": 10,
+      "to": 42,
+      "align": "left"
+    },
+    {
+      "id": "score9",
+      "row": 21,
+      "from": 40,
+      "to": 45,
+      "align": "right"
+    },
+    {
+      "id": "name10",
       "row": 22,
       "from": 10,
-      "to": 44,
+      "to": 42,
+      "align": "left"
+    },
+    {
+      "id": "score10",
+      "row": 22,
+      "from": 40,
+      "to": 45,
       "align": "right"
     }
 
