@@ -40,7 +40,8 @@ const PageStore = {
     const cachedPageContent = this.pages[pageNumber].pageContent
     return {
       title: cachedPageContent.title,
-      lines: [...cachedPageContent.lines]
+      lines: [...cachedPageContent.lines],
+      fullscreen: cachedPageContent.fullscreen || false
     }
   },
 
