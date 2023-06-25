@@ -1,17 +1,16 @@
 <?php
 header('Content-Type: application/json');
-$page = getPageNum();
 
+$charset = json_decode(file_get_contents('../../fonts/EuropeanTeletext.json')); // Valid Char-Array
+
+$page = getPageNum();
 $pageContent = readJSON($page);
 $pageContent = checkForFields($pageContent);
 $pageContent = setContents($pageContent);
 $pageContent = stripForTemplate($pageContent);
 //echo (json_encode($pageContent));
+
 writeJSON($page,json_encode($pageContent,JSON_PRETTY_PRINT|JSON_UNESCAPED_UNICODE));
-
-
-
-
 
 function readJSON($page) {
   // reads the JSON file from disk
@@ -30,11 +29,9 @@ function checkForFields($pageContent) {
   return $pageContent;
 }
 function writeJSON($page, $json) {
-
   // writes the new JSON file to disk
   $fp = fopen($page . '.json', 'w');
   fwrite($fp, $json);
-
   fclose($fp);
 }
 
@@ -42,9 +39,20 @@ function writeJSON($page, $json) {
 function pageIsValid($page) {
   if ($page >= 100 && $page < 900) {
     return true;
-  };
+  }
   return false;
 }
+
+function validChars($text) {
+   global $charset;
+   for($i=0;$i<mb_strlen($text,'utf8');$i++) {
+     if(!in_array(mb_substr($text,$i,1,'utf8'),$charset)) {
+       $text = mb_substr($text,0,$i,'utf8') . '?' . mb_substr($text,$i+1,mb_strlen($text,'utf8')-$i,'utf8');
+     }
+   }
+   return $text;
+}
+
 function stripForTemplate($pageContent) {
   unset($pageContent->dynamicSections);
   //echo(json_encode($pageContent));
@@ -52,24 +60,24 @@ function stripForTemplate($pageContent) {
 }
 function setContent($pageContent, $line ,$from, $to, $string, $orientation) {
   $thisLine = $pageContent->lines[$line];
+  $string = validChars($string); // Text pruefen ob Chars im Zeichensatz
+  $string = mb_substr($string,0,$to-$from,'utf8'); // Zu langen Text kuerzen
+  $textlen = mb_strlen($string,'utf8');  // Strlen
   if ($orientation == "left") {
-    $pageContent->lines[$line] = substr($thisLine,0,$from) . $string . substr($thisLine,$from + strlen($string));
+    $pageContent->lines[$line] = substr($thisLine,0,$from) . $string . substr($thisLine,$from + $textlen);
   }
   if ($orientation == "right") {
-    $fillSpace = $to - $from - strlen($string);
+    $fillSpace = $to - $from - $textlen;
     echo $fillSpace;
-    $pageContent->lines[$line] = substr($thisLine,0,$from+$fillSpace) . $string . substr($thisLine,$from + strlen($string)+$fillSpace);
+    $pageContent->lines[$line] = substr($thisLine,0,$from+$fillSpace) . $string . substr($thisLine,$from + $textlen+$fillSpace);
   }
   return $pageContent;
 }
 function setContents($pageContent) {
-  //var_dump($pageContent->dynamicSections);
-
   foreach($pageContent->dynamicSections as $key => $value) {
     if (isset($_GET[$value->id])) {
-      //var_dump($value);
-      $pageContent = setContent($pageContent, $value->row , $value->from, $value->to, $_GET[$value->id],  $value->align);
-
+      $line = $_GET[$value->id];
+      $pageContent = setContent($pageContent, $value->row , $value->from, $value->to, $line,  $value->align);
     }
 
   }
